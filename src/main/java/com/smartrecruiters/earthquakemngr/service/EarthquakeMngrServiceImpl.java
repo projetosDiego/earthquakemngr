@@ -12,6 +12,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.lucene.util.SloppyMath;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +23,8 @@ import mil.nga.sf.geojson.FeatureConverter;
 @Service
 public class EarthquakeMngrServiceImpl implements IEarthquakeMngrService{
 	
-	public static final String URL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson";
+	private static final Logger logger = LogManager.getLogger(EarthquakeMngrServiceImpl.class);
+	private static final String URL    = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson";
 
 	@Override
 	public Map<String, Long> getInfo(Double x, Double y) {
@@ -50,8 +53,8 @@ public class EarthquakeMngrServiceImpl implements IEarthquakeMngrService{
 					.limit(10)
 					.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,(e1, e2) -> e1, LinkedHashMap::new)); 
 
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (IOException ex) {
+			logger.error("{Exception occurred during data processing.}", ex);
 		}
 		return sortedNewMap;
 	}
