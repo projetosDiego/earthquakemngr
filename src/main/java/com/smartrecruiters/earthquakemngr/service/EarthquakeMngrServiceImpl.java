@@ -41,7 +41,7 @@ public class EarthquakeMngrServiceImpl implements IEarthquakeMngrService{
 				Double x2 = iterator.getFeature().getGeometry().getCentroid().getX();
 				Double y2 = iterator.getFeature().getGeometry().getCentroid().getY();
 				
-				Long distance = (long) SloppyMath.haversinKilometers(x, y, x2, y2);
+				Long distance = (long) (SloppyMath.haversinMeters(x, y, x2, y2)/1000);
 				
 				if(!map.containsValue(distance)) {
 					map.put(iterator.getFeature().getProperties().get("title").toString(), distance);
@@ -53,7 +53,7 @@ public class EarthquakeMngrServiceImpl implements IEarthquakeMngrService{
 					.limit(10)
 					.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,(e1, e2) -> e1, LinkedHashMap::new)); 
 
-		} catch (IOException ex) {
+		} catch (Exception ex) {
 			logger.error("{Exception occurred during data processing.}", ex);
 		}
 		return sortedNewMap;
